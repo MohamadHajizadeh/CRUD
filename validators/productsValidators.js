@@ -1,7 +1,7 @@
 const joi = require('joi');
 
-const productsValidator =  (body)=>{
-       const schema = joi.object({
+const productsValidator = (body) => {
+    const schema = joi.object({
         product_name: joi.string().min(3).max(20).required(),
         quantity: joi.number().default(0),
         details: joi.string(),
@@ -11,4 +11,4 @@ const productsValidator =  (body)=>{
     return schema.validate(body)
 }
 
-    module.exports = {productsValidator};
+module.exports = { productsValidator };

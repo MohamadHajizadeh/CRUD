@@ -1,7 +1,7 @@
 const express = require('express')
-const productRoute = require('./routes/productsRoute')
 const mongoose = require('mongoose')
-
+const productRoute = require('./routes/productsRoute')
+const customerRoute = require('./routes/customersRoute')
 // connect and create database
 
 mongoose.connect('mongodb://localhost:27017/store_db')
@@ -16,3 +16,4 @@ app.listen(port, error=>{
 })
 app.use(express.json())
 app.use(productRoute);
+app.use(customerRoute)
