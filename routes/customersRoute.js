@@ -1,15 +1,17 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const customerModel = require('../models/customersModel');
+const Customer = require('../models/customersModel');
 const customerValidator = require('../validators/customersValidator.js');
+
 const router = express.Router();
 
-// create a customer
+
+
+// ############# create a customer
 router.post('/api/customers', async (req, res) => {
     try {
         const { error } = customerValidator(req.body)
-        if (error) res.status(400).send({ message: error.message });
-        const newCustomer = await new customerModel({
+        if (error) return res.status(400).send({ message: error.message });
+        const newCustomer = new Customer({
             customer_name: req.body.customer_name,
             tellphone: req.body.tellphone,
             email: req.body.email,
@@ -17,57 +19,86 @@ router.post('/api/customers', async (req, res) => {
             address: req.body.address
         })
         await newCustomer.save()
-        res.send(newCustomer)
-        await console.log(`${newCustomer.customer_name} is inserted into database`);
+        res.status(201).send(newCustomer)
+        console.log(`${newCustomer.customer_name} is inserted into database`);
 
     } catch (error) {
         res.status(400).send(error.message)
     }
 })
 
-//get customer list
+//############## get customer list
 router.get('/api/customers', async (req, res) => {
     try {
-        const customerList = await customerModel.find();
+        const customerList = await Customer.find();
         res.send(customerList)
 
     } catch (error) {
-        res.status(404).send(error.message)
+        res.status(404).send({ message: error.message })
     }
 })
-// get a customer
+// ############# get a customer
 router.get('/api/customers/:id', async (req, res) => {
     try {
-        const customer = await customerModel.findById(req.params.id)
+        const customer = await Customer.findById(req.params.id)
+        if (!customer) return res.status(404).send({ message: "customer not found" })
         res.send(customer)
     } catch (error) {
         res.status(400).send(error.message)
 
     }
 })
-//update a customer
+// ########### update a customer
 router.put('/api/customers/:id', async (req, res) => {
     try {
-        const selectdCustomer = await customerModel.findByIdAndUpdate(req.params.id, {
+        const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, {
             customer_name: req.body.customer_name,
             tellphone: req.body.tellphone,
             email: req.body.email,
             pro: req.body.pro,
             address: req.body.address
-        })
-        const updatedCustomer = await customerModel.findById(req.params.id)
+        },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedCustomer) return res.status(404).send({ message: "customer not found" })
         res.send(updatedCustomer);
+        //######################
     } catch (error) {
         res.status(400).send(error.message)
     }
 })
-// delete a customer
+
+//##############  delete a customer
 router.delete('/api/customers/:id', async (req, res) => {
     try {
-        const deletedCustomer = await customerModel.findByIdAndDelete(req.params.id);
+        const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
+        if (!deletedCustomer) return res.status(404).send({ message: "customer not found" })
         res.send(`${deletedCustomer.customer_name} is deleted`)
     } catch (error) {
         res.status(404).send(error.message)
     }
 })
+
+//#############  update with patch
+router.patch('/api/customers/:id', async (req, res) => {
+    try {
+        const selectedCustomer = await Customer.findByIdAndUpdate(req.params.id, {
+            customer_name: req.body.customer_name,
+            tellphone: req.body.tellphone,
+            email: req.body.email,
+            pro: req.body.pro,
+            address: req.body.address
+        }, {
+            new: true,
+            runValidators: true
+        })
+
+        if (!selectedCustomer) return res.status(404).send({ message: "customer not found" })
+        res.send(selectedCustomer);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+})
+
 module.exports = router

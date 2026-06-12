@@ -11,5 +11,4 @@ const customerValidator = (body) => {
     return schema.validate(body)
 }
 
-// export default customerValidator; 
 module.exports = customerValidator;
