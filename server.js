@@ -1,7 +1,8 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const productRoute = require('./routes/productsRoute')
-const customerRoute = require('./routes/customersRoute')
+import express from 'express';
+import mongoose from 'mongoose';
+import customerRouter from './routes/customersRoute.js';
+import productRouter from './routes/productsRoute.js';
+
 // connect and create database
 
 mongoose.connect('mongodb://localhost:27017/store_db')
@@ -15,5 +16,5 @@ app.listen(port, error=>{
     console.log(`server is listening in port: ${port}`); 
 })
 app.use(express.json())
-app.use(productRoute);
-app.use(customerRoute)
+app.use(productRouter);
+app.use(customerRouter)

@@ -1,4 +1,4 @@
-const joi = require('joi');
+import joi  from 'joi';
 
 const productsValidator = (body) => {
     const schema = joi.object({
@@ -11,4 +11,4 @@ const productsValidator = (body) => {
     return schema.validate(body)
 }
 
-module.exports = { productsValidator };
+export default productsValidator;

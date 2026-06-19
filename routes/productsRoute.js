@@ -1,14 +1,14 @@
-const express = require('express');
-const Joi = require('joi');
-const mongoose = require('mongoose');
-const Product = require('../models/productsModel');
-const { productsValidator } = require('../validators/productsValidators');
+import express from 'express';
+import Joi from 'joi';
+import mongoose from 'mongoose';
+import productsValidator from '../validators/productsValidators.js';
+import Product from '../models/productsModel.js';
 // ##########################################################################
 
-const router = express.Router();
+const productRouter = express.Router();
 
 //get a list of product
-router.get('/api/products', async (req, res) => {
+productRouter.get('/api/products', async (req, res) => {
     try {
         const productList = await Product.find();
         await res.json(productList);
@@ -17,7 +17,7 @@ router.get('/api/products', async (req, res) => {
     }
 })
 // get a product
-router.get('/api/products/:id', async (req, res) => {
+productRouter.get('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: "not found" })
@@ -28,7 +28,7 @@ router.get('/api/products/:id', async (req, res) => {
 })
 // ###############
 //create a product
-router.post('/api/products', async (req, res) => {
+productRouter.post('/api/products', async (req, res) => {
 
     const { error } = productsValidator(req.body)
     if (error) return res.status(400).send({ error: error.message })
@@ -45,7 +45,7 @@ router.post('/api/products', async (req, res) => {
 })
 // ###########################
 // update a product
-router.put('/api/products/:id', async (req, res) => {
+productRouter.put('/api/products/:id', async (req, res) => {
     try {
         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, {
             product_name: req.body.product_name,
@@ -67,7 +67,7 @@ router.put('/api/products/:id', async (req, res) => {
 })
 // ##################
 // delete a product
-router.delete('/api/products/:id', async (req, res) => {
+productRouter.delete('/api/products/:id', async (req, res) => {
     try {
         const deletedProduct = await Product.findByIdAndDelete(req.params.id)
         if (!deletedProduct) return res.status(400).json({ messaage: "bad request" })
@@ -76,4 +76,4 @@ router.delete('/api/products/:id', async (req, res) => {
         res.status(404).send(error.message)
     }
 })
-module.exports = router;
+export default productRouter;

@@ -1,13 +1,14 @@
-const express = require('express');
-const Customer = require('../models/customersModel');
-const customerValidator = require('../validators/customersValidator.js');
+import express  from 'express';
 
-const router = express.Router();
+import customerValidator from '../validators/customersValidator.js';
+import Customer from '../models/customersModel.js';
+
+const customerRouter = express.Router();
 
 
 
 // ############# create a customer
-router.post('/api/customers', async (req, res) => {
+customerRouter.post('/api/customers', async (req, res) => {
     try {
         const { error } = customerValidator(req.body)
         if (error) return res.status(400).send({ message: error.message });
@@ -28,7 +29,7 @@ router.post('/api/customers', async (req, res) => {
 })
 
 //############## get customer list
-router.get('/api/customers', async (req, res) => {
+customerRouter.get('/api/customers', async (req, res) => {
     try {
         const customerList = await Customer.find();
         res.send(customerList)
@@ -38,7 +39,7 @@ router.get('/api/customers', async (req, res) => {
     }
 })
 // ############# get a customer
-router.get('/api/customers/:id', async (req, res) => {
+customerRouter.get('/api/customers/:id', async (req, res) => {
     try {
         const customer = await Customer.findById(req.params.id)
         if (!customer) return res.status(404).send({ message: "customer not found" })
@@ -49,7 +50,7 @@ router.get('/api/customers/:id', async (req, res) => {
     }
 })
 // ########### update a customer
-router.put('/api/customers/:id', async (req, res) => {
+customerRouter.put('/api/customers/:id', async (req, res) => {
     try {
         const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, {
             customer_name: req.body.customer_name,
@@ -70,7 +71,7 @@ router.put('/api/customers/:id', async (req, res) => {
 })
 
 //##############  delete a customer
-router.delete('/api/customers/:id', async (req, res) => {
+customerRouter.delete('/api/customers/:id', async (req, res) => {
     try {
         const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
         if (!deletedCustomer) return res.status(404).send({ message: "customer not found" })
@@ -81,7 +82,7 @@ router.delete('/api/customers/:id', async (req, res) => {
 })
 
 //#############  update with patch
-router.patch('/api/customers/:id', async (req, res) => {
+customerRouter.patch('/api/customers/:id', async (req, res) => {
     try {
         const selectedCustomer = await Customer.findByIdAndUpdate(req.params.id, {
             customer_name: req.body.customer_name,
@@ -101,4 +102,4 @@ router.patch('/api/customers/:id', async (req, res) => {
     }
 })
 
-module.exports = router
+export default customerRouter;
